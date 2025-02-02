@@ -6,6 +6,8 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Tenancy\RegisterStore;
 use App\Models\Store;
+use DutchCodingCompany\FilamentSocialite\FilamentSocialitePlugin;
+use DutchCodingCompany\FilamentSocialite\Provider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -46,6 +48,19 @@ final class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
+            ->plugin(
+                FilamentSocialitePlugin::make()
+                    ->providers([
+                        Provider::make('google')
+                            ->label('Google')
+                            ->icon('fab-google')
+                            ->color(Color::hex('#2c2c2c'))
+                            ->outlined(false)
+                            ->stateless(false)
+                            ->visible(true),
+                    ])
+                    ->registration(true)
+            )
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,

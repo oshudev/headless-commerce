@@ -36,6 +36,7 @@ final class AdminPanelProvider extends PanelProvider
             ->login()
             ->registration()
             ->emailVerification()
+            ->passwordReset()
             ->tenant(Store::class)
             ->tenantRegistration(RegisterStore::class)
             ->tenantMenuItems([

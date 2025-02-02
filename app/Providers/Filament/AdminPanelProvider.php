@@ -35,6 +35,7 @@ final class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->registration()
+            ->emailVerification()
             ->tenant(Store::class)
             ->tenantRegistration(RegisterStore::class)
             ->tenantMenuItems([

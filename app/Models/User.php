@@ -32,6 +32,7 @@ final class User extends Authenticatable implements FilamentUser, HasDefaultTena
         'email',
         'password',
         'store_id',
+        'email_verified_at',
     ];
 
     /**

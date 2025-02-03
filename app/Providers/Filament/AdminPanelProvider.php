@@ -6,6 +6,8 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Tenancy\RegisterStore;
 use App\Models\Store;
+use App\Models\User;
+use Carbon\Carbon;
 use DutchCodingCompany\FilamentSocialite\FilamentSocialitePlugin;
 use DutchCodingCompany\FilamentSocialite\Provider;
 use Filament\Http\Middleware\Authenticate;
@@ -24,6 +26,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Laravel\Socialite\Contracts\User as SocialiteUserContract;
 
 final class AdminPanelProvider extends PanelProvider
 {
@@ -50,7 +53,7 @@ final class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->plugin(
+            ->plugins([
                 FilamentSocialitePlugin::make()
                     ->providers([
                         Provider::make('google')
@@ -62,7 +65,24 @@ final class AdminPanelProvider extends PanelProvider
                             ->visible(true),
                     ])
                     ->registration(true)
-            )
+                    ->createUserUsing(function (string $provider, SocialiteUserContract $oauthUser, FilamentSocialitePlugin $socialite) {
+                        return User::create([
+                            'name' => $oauthUser->getName(),
+                            'email' => $oauthUser->getEmail(),
+                            'email_verified_at' => Carbon::now(),
+                            'password' => null,
+                        ]);
+                    })
+                    ->resolveUserUsing(function (string $provider, SocialiteUserContract $oauthUser, FilamentSocialitePlugin $socialite) {
+                        $user = User::where('email', $oauthUser->getEmail())->first();
+
+                        if ($user && ! $user->hasVerifiedEmail()) {
+                            $user->markEmailAsVerified();
+                        }
+
+                        return $user;
+                    }),
+            ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,

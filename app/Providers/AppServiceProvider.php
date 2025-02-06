@@ -27,7 +27,7 @@ final class AppServiceProvider extends ServiceProvider
     {
         $this->configureCommands();
         $this->configureModels();
-        // $this->configureUrl();
+        $this->configureUrl();
         $this->configureVite();
     }
 

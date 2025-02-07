@@ -6,9 +6,11 @@ namespace App\Providers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 
 final class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +28,7 @@ final class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureCommands();
+        $this->configureLivewireAssets();
         $this->configureModels();
         $this->configureUrl();
         $this->configureVite();
@@ -42,7 +45,18 @@ final class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * Configure the application's models. */
+     * Configure the application's models.
+     */
+    private function configureLivewireAssets(): void
+    {
+        Livewire::setScriptRoute(function ($handle) {
+            return Route::get('vendor/livewire/livewire.js', $handle);
+        });
+    }
+
+    /**
+     * Configure the application's models.
+     */
     private function configureModels(): void
     {
         Model::shouldBeStrict();
